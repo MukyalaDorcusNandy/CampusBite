@@ -8,11 +8,20 @@ import com.example.campusbite.models.Order
 import com.example.campusbite.models.OrderStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 
 class CartViewModel : ViewModel() {
     private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
     val cartItems: StateFlow<List<CartItem>> = _cartItems
+
+    // Reactive total price — recomputes whenever cartItems changes
+    val totalPrice: StateFlow<Double> = _cartItems
+        .map { items -> items.sumOf { it.totalPrice } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
 
     private val _currentOrder = MutableStateFlow<Order?>(null)
     val currentOrder: StateFlow<Order?> = _currentOrder
@@ -60,6 +69,11 @@ class CartViewModel : ViewModel() {
 
     fun clearCart() {
         _cartItems.value = emptyList()
+    }
+
+    fun cancelOrder() {
+        _orderStatus.value = OrderStatus.CANCELLED
+        _currentOrder.value = null
     }
 
     fun placeOrder(userId: String, onSuccess: () -> Unit) {

@@ -27,7 +27,7 @@ fun CartScreen(
     userId: String
 ) {
     val cartItems by cartViewModel.cartItems.collectAsState()
-    val totalPrice = cartViewModel.getTotalPrice()
+    val totalPrice by cartViewModel.totalPrice.collectAsState()
 
     Scaffold(
         topBar = {
@@ -100,6 +100,16 @@ fun CartScreen(
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedButton(
+                        onClick = { cartViewModel.clearCart() },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("Clear Cart", fontSize = 16.sp)
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     Button(
                         onClick = {

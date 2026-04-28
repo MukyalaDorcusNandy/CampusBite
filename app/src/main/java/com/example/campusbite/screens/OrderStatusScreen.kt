@@ -132,6 +132,42 @@ fun OrderStatusScreen(
                     Text("Back to Menu")
                 }
             }
+
+            if (orderStatus != null &&
+                orderStatus != OrderStatus.READY_FOR_PICKUP &&
+                orderStatus != OrderStatus.CANCELLED
+            ) {
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedButton(
+                    onClick = { cartViewModel.cancelOrder() },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Cancel Order")
+                }
+            }
+
+            if (orderStatus == OrderStatus.CANCELLED) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Order Cancelled",
+                    color = MaterialTheme.colorScheme.error,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(
+                    onClick = {
+                        cartViewModel.resetOrder()
+                        onBackToMenu()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Back to Menu")
+                }
+            }
         }
     }
 }
